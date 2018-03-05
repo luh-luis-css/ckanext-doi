@@ -49,6 +49,7 @@ class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         @param pkg_dict:
         @return:
         """
+        print('-------------> '.format(str(pkg_dict)))
         create_unique_identifier(pkg_dict['id'])
 
     ## IPackageController
