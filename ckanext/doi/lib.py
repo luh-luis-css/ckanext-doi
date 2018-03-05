@@ -16,6 +16,7 @@ from requests.exceptions import HTTPError
 import ckan.model as model
 from ckan.lib import helpers as h
 import ckan.plugins as p
+from ckan.plugins import toolkit as tk
 from ckanext.doi.api import MetadataDataCiteAPI, DOIDataCiteAPI
 from ckanext.doi.model.doi import DOI
 from ckanext.doi.datacite import get_prefix
@@ -195,9 +196,10 @@ def validate_metadata(metadata_dict):
     """
 
     # Check we have mandatory DOI fields
-    mandatory_fields = ['title', 'creator']
+    mandatory_fields = ['title', 'creator', 'rights']
 
     # Make sure our mandatory fields are populated
     for field in mandatory_fields:
         if not metadata_dict.get(field, None):
+            log.debug('{} does not exists []'.format(field, None))
             raise DOIMetadataException('Missing DataCite required field %s' % field)
