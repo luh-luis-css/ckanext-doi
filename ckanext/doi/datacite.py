@@ -38,3 +38,15 @@ def get_endpoint():
     @return: test endpoint if we're in test mode
     """
     return TEST_ENDPOINT if get_test_mode() else ENDPOINT
+
+def get_proxy():
+    """
+    Get the proxy url from config
+    :return: proxy_url || False
+    """
+    proxies = {
+        'http': config.get('ckanext.doi.proxy_http'),
+        'https': config.get('ckanext.doi.proxy_https')
+    }
+
+    return proxies

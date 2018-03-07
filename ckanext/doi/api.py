@@ -11,9 +11,10 @@ import requests
 from requests import ConnectionError, HTTPError
 from pylons import config
 from xmltodict import unparse
-from ckanext.doi.datacite import get_endpoint, get_test_mode
+from ckanext.doi.datacite import get_endpoint, get_test_mode, get_proxy
 from logging import getLogger
 import ckan.plugins as p
+import ckan.plugins.toolkit as toolkit
 from ckanext.doi.interfaces import IDoi
 
 log = getLogger(__name__)
@@ -47,6 +48,9 @@ class DataCiteAPI(object):
 
         if get_test_mode():
             kwargs['verify'] = False
+
+        if get_proxy():
+            kwargs['proxies'] = get_proxy()
 
         log.info("Calling %s:%s - %s", endpoint, method, kwargs)
 
