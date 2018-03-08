@@ -39,14 +39,17 @@ def get_endpoint():
     """
     return TEST_ENDPOINT if get_test_mode() else ENDPOINT
 
+
 def get_proxy():
     """
-    Get the proxy url from config
-    :return: proxy_url || False
+    Get the proxy url from config file
+    :return: proxy_url || None
     """
-    proxies = {
-        'http': config.get('ckanext.doi.proxy_http'),
-        'https': config.get('ckanext.doi.proxy_https')
-    }
+    proxies = {}
+    if config.get('ckanext.doi.proxy_http', False):
+        proxies['http'] = config.get('ckanext.doi.proxy_http')
+
+    if config.get('ckanext.doi.proxy_https', False):
+        proxies['https'] = config.get('ckanext.doi.proxy_https')
 
     return proxies

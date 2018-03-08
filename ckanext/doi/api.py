@@ -14,7 +14,6 @@ from xmltodict import unparse
 from ckanext.doi.datacite import get_endpoint, get_test_mode, get_proxy
 from logging import getLogger
 import ckan.plugins as p
-import ckan.plugins.toolkit as toolkit
 from ckanext.doi.interfaces import IDoi
 
 log = getLogger(__name__)
