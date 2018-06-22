@@ -70,6 +70,7 @@ class DataCiteAPI(object):
             log.error('Creating DOI Failed - error %s', r.content)
             raise
         else:
+            log.error('R %s', str(r))
             return r
 
 
