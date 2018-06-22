@@ -16,6 +16,7 @@ from requests.exceptions import HTTPError
 import ckan.model as model
 from ckan.lib import helpers as h
 import ckan.plugins as p
+from ckan.plugins import toolkit as tk
 from ckanext.doi.api import MetadataDataCiteAPI, DOIDataCiteAPI
 from ckanext.doi.model.doi import DOI
 from ckanext.doi.datacite import get_prefix
@@ -157,6 +158,7 @@ def build_metadata(pkg_dict, doi):
         # Otherwise use the tags list itself
         metadata_dict['subject'] = list(set([tag['name'] if isinstance(tag, dict) else tag for tag in pkg_dict['tags']])).sort()
 
+    # check the license settings
     if pkg_dict['license_id'] != 'notspecified':
 
         licenses = model.Package.get_license_options()
@@ -165,6 +167,11 @@ def build_metadata(pkg_dict, doi):
             if license_id == pkg_dict['license_id']:
                 metadata_dict['rights'] = license_title
                 break
+
+    # if authors separated with , split the string into a list
+    if pkg_dict['author'].split(','):
+        print(u'Pkg: {}'.format(pkg_dict['author'].split(',')))
+        metadata_dict['creator'] = pkg_dict['author'].split(',')
 
     if pkg_dict.get('version', None):
         metadata_dict['version'] = pkg_dict['version']
@@ -195,9 +202,10 @@ def validate_metadata(metadata_dict):
     """
 
     # Check we have mandatory DOI fields
-    mandatory_fields = ['title', 'creator']
+    mandatory_fields = ['title', 'creator', 'rights']
 
     # Make sure our mandatory fields are populated
     for field in mandatory_fields:
         if not metadata_dict.get(field, None):
+            log.debug('{} does not exists []'.format(field, None))
             raise DOIMetadataException('Missing DataCite required field %s' % field)

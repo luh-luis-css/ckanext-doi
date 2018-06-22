@@ -11,16 +11,19 @@ from ckan import model
 from ckanext.doi.model import doi as doi_model
 from ckanext.doi.lib import get_doi, publish_doi, update_doi, create_unique_identifier, get_site_url, build_metadata, validate_metadata
 from ckanext.doi.helpers import package_get_year, now, get_site_title
+from ckanext.doi.exc import DOIMetadataException
+from ckan.lib.plugins import DefaultTranslation
 
 get_action = logic.get_action
 
 log = getLogger(__name__)
 
 
-class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
+class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm, DefaultTranslation):
     """
     CKAN DOI Extension
     """
+    p.implements(p.ITranslation)
     p.implements(p.IConfigurable)
     p.implements(p.IConfigurer)
     p.implements(p.IPackageController, inherit=True)
@@ -49,6 +52,7 @@ class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
         @param pkg_dict:
         @return:
         """
+        print('-------------> '.format(str(pkg_dict)))
         create_unique_identifier(pkg_dict['id'])
 
     ## IPackageController
@@ -85,7 +89,11 @@ class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
             # Perform some basic checks against the data - we require at the very least
             # title and author fields - they're mandatory in the DataCite Schema
             # This will only be an issue if another plugin has removed a mandatory field
-            validate_metadata(metadata_dict)
+            try:
+                validate_metadata(metadata_dict)
+            except DOIMetadataException as e:
+                h.flash_error(e)
+                p.toolkit.redirect_to(controller='package', action='read', id=package_id)
 
             # Is this an existing DOI? Update it
             if doi.published:

@@ -9,7 +9,6 @@ Renders a citation for a resource
         <div class="module-content citation">
             <h3>{{ _('Cite this as') }}</h3>
 
-
                 {% set site_title = h.get_site_title() %}
                 <p>
                     {{ pkg_dict['author'] }} ({{ h.package_get_year(pkg_dict) }}). Dataset: {{ pkg_dict['title'] }}. Resource: {{ res['name'] }}.
@@ -17,12 +16,12 @@ Renders a citation for a resource
                         {{ site_title }}.
                     {% endif %}
                 {% block citation_link %}
-                    {{ super() }}
+                    <a href="http://dx.doi.org/{{ pkg_dict['doi'] }}#/resource/{{res['id']}}" target="_blank">http://dx.doi.org/{{ pkg_dict['doi'] }}#/resource/{{res['id']}}</a></p>
                 {% endblock %}
                 </p>
 
             {% block citation_status %}
-                {{ super() }}
+            {{ super() }}
             {% endblock %}
 
         </div>

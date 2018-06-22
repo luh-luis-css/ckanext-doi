@@ -70,6 +70,8 @@ ckanext.doi.publisher =
 ckanext.doi.test_mode = True or False
 ckanext.doi.site_url =  # Defaults to ckan.site_url if not set 
 ckanext.doi.site_title = # Optional - site title to use in the citation - eg Natural History Museum Data Portal (data.nhm.ac.uk)
+ckanext.doi.proxy_https = http://ssl-proxy.example.com:3130
+ckanext.doi.proxy_http = http://proxy.example.com:3130
 ```
 
 Account name, password and prefix will be provided by your DataCite provider.
@@ -84,6 +86,10 @@ If site_url is not set, ckan.site_url will be used instead.
 
 
 If test mode is set to true, the DOIs will use the DataCite test prefix 10.5072
+
+__Optional config settings:__
+
+__ckanext.doi.proxy_http__ and __ckanext.doi.proxy_https__ to set direct proxies for api requests to datacite (see above).
 
 To delete all test prefixes, use the command:
 
