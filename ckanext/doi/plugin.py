@@ -12,16 +12,18 @@ from ckanext.doi.model import doi as doi_model
 from ckanext.doi.lib import get_doi, publish_doi, update_doi, create_unique_identifier, get_site_url, build_metadata, validate_metadata
 from ckanext.doi.helpers import package_get_year, now, get_site_title
 from ckanext.doi.exc import DOIMetadataException
+from ckan.lib.plugins import DefaultTranslation
 
 get_action = logic.get_action
 
 log = getLogger(__name__)
 
 
-class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm):
+class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm, DefaultTranslation):
     """
     CKAN DOI Extension
     """
+    p.implements(p.ITranslation)
     p.implements(p.IConfigurable)
     p.implements(p.IConfigurer)
     p.implements(p.IPackageController, inherit=True)

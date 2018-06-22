@@ -158,6 +158,7 @@ def build_metadata(pkg_dict, doi):
         # Otherwise use the tags list itself
         metadata_dict['subject'] = list(set([tag['name'] if isinstance(tag, dict) else tag for tag in pkg_dict['tags']])).sort()
 
+    # check the license settings
     if pkg_dict['license_id'] != 'notspecified':
 
         licenses = model.Package.get_license_options()
@@ -166,6 +167,11 @@ def build_metadata(pkg_dict, doi):
             if license_id == pkg_dict['license_id']:
                 metadata_dict['rights'] = license_title
                 break
+
+    # if authors separated with , split the string into a list
+    if pkg_dict['author'].split(','):
+        print(u'Pkg: {}'.format(pkg_dict['author'].split(',')))
+        metadata_dict['creator'] = pkg_dict['author'].split(',')
 
     if pkg_dict.get('version', None):
         metadata_dict['version'] = pkg_dict['version']
