@@ -24,8 +24,16 @@ setup(
 	"""
     [ckan.plugins]
     	doi=ckanext.doi.plugin:DOIPlugin
-
+     [babel.extractors]
+        ckan = ckan.lib.extract:extract_ckan
     [paste.paster_command]
         doi=ckanext.doi.commands.doi:DOICommand
 	""",
+	message_extractors={
+		'ckanext': [
+			('**.py', 'python', None),
+			('**.js', 'javascript', None),
+			('**/templates/**.html', 'ckan', None),
+		],
+	}
 )
