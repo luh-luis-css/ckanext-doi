@@ -12,7 +12,7 @@ import itertools
 from logging import getLogger
 from ckan.model import Session
 from pylons import config
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, ProxyError
 import ckan.model as model
 from ckan.lib import helpers as h
 import ckan.plugins as p
@@ -29,7 +29,7 @@ log = getLogger(__name__)
 
 def create_unique_identifier(package_id):
     """
-    Create a unique identifier, using the prefix and a random number: 10.5072/0044634
+    Create a unique identifier, using the prefix and a random number: 10.5072/$publisher.0044634
     Checks the random number doesn't exist in the table or the datacite repository
     All unique identifiers are created with
     @return:
@@ -38,7 +38,12 @@ def create_unique_identifier(package_id):
 
     while True:
 
-        identifier = os.path.join(get_prefix(), '{0:07}'.format(random.randint(1, 100000)))
+        # build the identifier in form $PUBLISHER.$RAND_DOI
+        publisher = config.get("ckanext.doi.publisher")
+        if not publisher:
+            identifier = os.path.join(get_prefix(), '{0:07}'.format(random.randint(1, 100000)))
+        else:
+            identifier = os.path.join(get_prefix(), '{0}.{1:07}'.format(publisher, random.randint(1, 100000)))
 
         # Check this identifier doesn't exist in the table
         if not Session.query(DOI).filter(DOI.identifier == identifier).count():
@@ -47,6 +52,8 @@ def create_unique_identifier(package_id):
             try:
                 datacite_doi = datacite_api.get(identifier)
             except HTTPError:
+                pass
+            except ProxyError:
                 pass
             else:
                 if datacite_doi.text:
