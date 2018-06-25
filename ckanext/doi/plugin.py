@@ -110,11 +110,8 @@ class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm, DefaultTranslat
                     try:
                         update_doi(package_id, **metadata_dict)
                         h.flash_success('DataCite DOI metadata updated')
-                    except ConnectionError as e:
-                        h.flash_error('<h3>DOI-Metadata was not updated!</h3><p><strong>Please try to save the dataset again or contact us!</strong></p><p>[{}]</p>'.format(e), allow_html=True)
-                        p.toolkit.redirect_to(controller='package', action='edit', id=package_id)
-                    except HTTPError as e:
-                        h.flash_error('<h3><h3>DOI-Metadata was not updated!</h3><p><strong>Please try to save the dataset again or contact us!</strong></p><p>[{}]</p>'.format(e), allow_html=True)
+                    except Exception as e:
+                        h.flash_error('<h3>DOI-Metadata was not updated!</h3><p><strong>Please edit the dataset again and try to save it - or contact us with the following error message!</strong></p><p>[{}]</p>'.format(e), allow_html=True)
                         p.toolkit.redirect_to(controller='package', action='edit', id=package_id)
 
                     # TODO: If editing a dataset older than 5 days, create DOI revision
@@ -124,7 +121,7 @@ class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm, DefaultTranslat
                 try:
                     publish_doi(package_id, **metadata_dict)
                     h.flash_success('DataCite DOI created!')
-                except ConnectionError as e:
+                except Exception as e:
                     h.flash_error('<h3>DOI and Metadate was not published!</h3><p>Please try to save the dataset again to publish the doi or contact us!</p> <p>[{}]</p>'.format(e), allow_html=True)
                     p.toolkit.redirect_to(controller='package', action='edit', id=package_id)
 

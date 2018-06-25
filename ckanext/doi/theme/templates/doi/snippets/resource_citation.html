@@ -16,7 +16,10 @@ Renders a citation for a resource
                         {{ site_title }}.
                     {% endif %}
                 {% block citation_link %}
+                    {#  todo: referencing resources, need changes in ckan core IMHO #}
+                    <!--
                     <a href="http://dx.doi.org/{{ pkg_dict['doi'] }}#/resource/{{res['id']}}" target="_blank">http://dx.doi.org/{{ pkg_dict['doi'] }}#/resource/{{res['id']}}</a></p>
+                    -->
                 {% endblock %}
                 </p>
 
