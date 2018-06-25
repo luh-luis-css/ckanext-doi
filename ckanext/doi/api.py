@@ -50,6 +50,7 @@ class DataCiteAPI(object):
 
         if get_proxy():
             kwargs['proxies'] = get_proxy()
+            kwargs['timeout'] = 10
 
         log.info("Calling %s:%s - %s", endpoint, method, kwargs)
 
