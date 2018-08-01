@@ -7,6 +7,9 @@ Renders a citation for a resource
 {% block citation %}
     <section class="module additional-info">
         <div class="module-content citation">
+        {#  todo: referencing resources, need changes in ckan core IMHO #}
+        <!--
+
             <h3>{{ _('Cite this as') }}</h3>
 
                 {% set site_title = h.get_site_title() %}
@@ -23,7 +26,7 @@ Renders a citation for a resource
             {% block citation_status %}
             {{ super() }}
             {% endblock %}
-
+        -->
         </div>
     </section>
 {% endblock %}

@@ -13,6 +13,7 @@ from ckanext.doi.lib import get_doi, publish_doi, update_doi, create_unique_iden
 from ckanext.doi.helpers import package_get_year, now, get_site_title
 from ckanext.doi.exc import DOIMetadataException
 from ckan.lib.plugins import DefaultTranslation
+from requests.exceptions import HTTPError, Timeout, ConnectTimeout, ConnectionError
 
 get_action = logic.get_action
 
@@ -52,8 +53,9 @@ class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm, DefaultTranslat
         @param pkg_dict:
         @return:
         """
-        print('-------------> '.format(str(pkg_dict)))
+        print('[after_create] {} '.format(str(pkg_dict)))
         create_unique_identifier(pkg_dict['id'])
+
 
     ## IPackageController
     def after_update(self, context, pkg_dict):
@@ -105,15 +107,23 @@ class DOIPlugin(p.SingletonPlugin, p.toolkit.DefaultDatasetForm, DefaultTranslat
                 # Check if the two dictionaries are the same
                 if cmp(orig_metadata_dict, metadata_dict) != 0:
                     # Not the same, so we want to update the metadata
-                    update_doi(package_id, **metadata_dict)
-                    h.flash_success('DataCite DOI metadata updated')
+                    try:
+                        update_doi(package_id, **metadata_dict)
+                        h.flash_success('DataCite DOI metadata updated')
+                    except Exception as e:
+                        h.flash_error('<h3>DOI-Metadata was not updated!</h3><p><strong>Please edit the dataset again and try to save it - or contact us with the following error message!</strong></p><p>[{}]</p>'.format(e), allow_html=True)
+                        p.toolkit.redirect_to(controller='package', action='edit', id=package_id)
 
                     # TODO: If editing a dataset older than 5 days, create DOI revision
 
             # New DOI - publish to datacite
             else:
-                h.flash_success('DataCite DOI created')
-                publish_doi(package_id, **metadata_dict)
+                try:
+                    publish_doi(package_id, **metadata_dict)
+                    h.flash_success('DataCite DOI created!')
+                except Exception as e:
+                    h.flash_error('<h3>DOI and Metadate was not published!</h3><p>Please try to save the dataset again to publish the doi or contact us!</p> <p>[{}]</p>'.format(e), allow_html=True)
+                    p.toolkit.redirect_to(controller='package', action='edit', id=package_id)
 
         return pkg_dict
 
