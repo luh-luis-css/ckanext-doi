@@ -3,6 +3,8 @@
 """
 Created by 'bens3' on 2013-06-21.
 Copyright (c) 2013 'bens3'. All rights reserved.
+Modified by 'r31k' on 2018-06-22 <kaps@luis.uni-hannover.de>
+
 """
 
 import os
@@ -39,7 +41,7 @@ def create_unique_identifier(package_id):
     while True:
 
         # build the identifier in form $PUBLISHER.$RAND_DOI
-        publisher = config.get("ckanext.doi.publisher")
+        publisher = config.get("ckanext.doi.publish_prefix")
         if not publisher:
             identifier = os.path.join(get_prefix(), '{0:07}'.format(random.randint(1, 100000)))
         else:
