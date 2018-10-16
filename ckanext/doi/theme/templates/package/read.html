@@ -9,6 +9,54 @@ Add DataCite DOI data to the additional_info section
 
 {% ckan_extends %}
 
+{% block package_description %}
+    {% if pkg.private %}
+      <span class="dataset-private label label-inverse pull-right">
+        <i class="fa fa-lock"></i>
+        {{ _('Private') }}
+      </span>
+    {% endif %}
+    <h1>
+      {% block page_heading %}
+        {{ h.dataset_display_name(pkg) }}
+        {% if pkg.state.startswith('draft') %}
+          [{{ _('Draft') }}]
+        {% endif %}
+        {% if pkg.state == 'deleted' %}
+          [{{ _('Deleted') }}]
+        {% endif %}
+      {% endblock %}
+    </h1>
+    <address class="quote-author" rel="author">
+    {{ pkg.author }} | {{ h.package_get_year(pkg) }} <a href="https://doi.org/{{ pkg['doi'] }}" target="_blank"><span class="badge badge-secondary">DOI: {{ pkg['doi'] }}</span></a>
+    </address>
+
+
+    {% block package_notes %}
+
+      {% if pkg.notes %}
+          <div class="panel panel-info">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a href="#notes" data-toggle="collapse">
+                    Show full description: {{ h.markdown_extract(h.get_translated(pkg, 'notes')|truncate(40) ) }}
+                    </a>
+                </div>
+            </div>
+              <div id="notes" class="collapse">
+                  <div class="panel-body">
+                      {{ h.render_markdown(h.get_translated(pkg, 'notes') ) }}
+                  </div>
+              </div>
+          </div>
+
+      {% endif %}
+
+    {% endblock %}
+    {# FIXME why is this here? seems wrong #}
+    <span class="insert-comment-thread"></span>
+  {% endblock %}
+
 {% block package_resources %}
 
     {% if pkg.state == 'deleted' %}
